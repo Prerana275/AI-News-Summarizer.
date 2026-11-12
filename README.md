@@ -43,6 +43,10 @@ An AI-powered news summarization and email automation workflow built using **n8n
 
 This project demonstrates how AI and workflow automation can be combined to automatically fetch, analyze, summarize, and distribute news through email.
 
+## 📸 Workflow Screenshot
+
+![AI News Summarizer Workflow](workflow-screenshot.png)
+
 ## 👩‍💻 Author
 
 **Prerana**
