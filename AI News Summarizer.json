@@ -1,0 +1,200 @@
+{
+  "name": "AI News Summarizer",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4cac702d-6a7a-485a-973a-c95c1123938a",
+      "name": "When chat message received",
+      "webhookId": "6e8b3fac-052e-4cd7-89b6-ed85c9306126"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are an AI News Summarizer. Your task is to analyze the latest news articles provided to you and generate a well-structured, professional email digest.\n\nFollow these instructions:\n\n**Email Subject:** 📰 Daily News Digest – [Current Date]\n\n**Email Body Format:**\n\nHello,\n\nHere is your latest news update. Below are the most important news stories summarized for easy reading.\n\n### 1. Top Headlines\nFor each news article, include:\n\n- **Headline:** A clear and attractive title.\n- **Category:** Technology / Politics / Business / Sports / Entertainment / Health, etc.\n- **Summary:** Summarize the article in 3–5 sentences. Include only important information.\n- **Key Takeaways:** Mention the most important point in 1–2 bullet points.\n- **Source:** Include the original news source name.\n- **Read More:** Include the original article URL as a clickable link.\n\n### 2. Today's Key Highlights\nProvide 3–5 important highlights from all the news articles.\n\n### 3. Overall News Summary\nWrite a short paragraph describing the major events and trends covered in today's news.\n\n### 4. Closing\nEnd the email with:\n\n\"That's your daily news update! Stay informed and stay ahead.\"\n\nRegards,\nAI News Summarizer\n\n**Important Instructions:**\n1. Use simple, professional English.\n2. Make the email visually attractive and easy to read.\n3. Use proper headings, spacing, bullet points and separators.\n4. Avoid unnecessary information and repetition.\n5. Do not invent facts or information that is not present in the articles.\n6. Preserve the original article URLs.\n7. Make the email suitable for both desktop and mobile screens.\n8. Return the result as clean HTML email content that can be sent directly through an email service.\n9. Use inline CSS for email compatibility.\n10. Do not include Markdown formatting in the HTML output.\n\nHere are the fetched news articles:\n\n[INSERT NEWS ARTICLES HERE]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "0fa0ba21-b6eb-49ba-9f2e-87dc33256d65",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        208
+      ],
+      "id": "af7dab8f-69cd-4e8f-aa22-10b3a8bdad93",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "pQH9vqWcIrnDknF7",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        208
+      ],
+      "id": "f4d3abc6-6b5d-4586-8e1f-458cf3b83450",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        240
+      ],
+      "id": "f3af5bcb-49fa-4b5a-afec-ef97224b228f",
+      "name": "Send a message in Gmail",
+      "webhookId": "65196383-d8d5-47e7-8a80-69e505ef919f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "vl1362LzXnNtbkiE",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/top-headlines",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "category",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `category of news headlines`, 'string') }}"
+            },
+            {
+              "name": "q",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `keyword or phrase for searching`, 'string') }}"
+            },
+            {
+              "name": "pageSize",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `number of articles to fetch`, 'string') }}"
+            }
+          ]
+        },
+        "options": {},
+        "optimizeResponse": true,
+        "dataField": "articles"
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        384,
+        208
+      ],
+      "id": "8551d1bd-af71-412f-a565-3cde92e0f346",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "cZrEl7Af1D824ptd",
+          "name": "Header Auth account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "686f7184-2ac5-404e-aeab-db4f655b2ed3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3277d9ea3b0adc9c480929b578bdad3f2b9d655315034720f3d220a48ebf6c56"
+  },
+  "nodeGroups": [],
+  "id": "F7xeL0KhvbvG6V0k",
+  "tags": []
+}
