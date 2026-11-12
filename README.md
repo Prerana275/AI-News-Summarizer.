@@ -45,7 +45,7 @@ This project demonstrates how AI and workflow automation can be combined to auto
 
 ## 📸 Workflow Screenshot
 
-![AI News Summarizer Workflow](workflow-screenshot.png)
+wokflow screenshot.png
 
 ## 👩‍💻 Author
 
